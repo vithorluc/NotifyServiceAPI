@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: backend_web
+    command: flask run --host=0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.2
+    container_name: backend_redis
+
+  worker:
+    build: .
+    container_name: backend_worker
+    # command: celery -A app.celery worker --loglevel=info
+    depends_on:
+      - web
+      - redis
+    volumes:
+      - .:/app
